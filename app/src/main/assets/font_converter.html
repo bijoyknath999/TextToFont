@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Converter</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 40px;
+        }
+        .output-box {
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center my-4">Text Font Converter</h1>
+
+    <!-- Input Area -->
+    <div class="mb-4">
+        <label for="inputText" class="form-label">Enter Text:</label>
+        <textarea id="inputText" class="form-control" rows="5" placeholder="Type something here..." oninput="convertText()"></textarea>
+    </div>
+
+    <!-- Output Area -->
+    <div class="row g-3">
+        <div class="col-lg-6 col-12">
+            <div class="output-box">
+                <label for="outputTextStyle1" class="form-label">Converted Text (Style 1):</label>
+                <textarea id="outputTextStyle1" class="form-control" rows="5" onfocus="this.select()"></textarea>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-12">
+            <div class="output-box">
+                <label for="outputTextStyle2" class="form-label">Converted Text (Style 2):</label>
+                <textarea id="outputTextStyle2" class="form-control" rows="5" onfocus="this.select()"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JavaScript Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Font mapping for "Style 1" (Bold-like font characters)
+    const fontMappingStyle1 = {
+        "A": "𝐀", "B": "𝐁", "C": "𝐂", "D": "𝐃", "E": "𝐄", "F": "𝐅", "G": "𝐆", "H": "𝐇", "I": "𝐈",
+        "J": "𝐉", "K": "𝐊", "L": "𝐋", "M": "𝐌", "N": "𝐍", "O": "𝐎", "P": "𝐏", "Q": "𝐐", "R": "𝐑",
+        "S": "𝐒", "T": "𝐓", "U": "𝐔", "V": "𝐕", "W": "𝐖", "X": "𝐗", "Y": "𝐘", "Z": "𝐙",
+        "a": "𝐚", "b": "𝐛", "c": "𝐜", "d": "𝐝", "e": "𝐞", "f": "𝐟", "g": "𝐠", "h": "𝐡", "i": "𝐢",
+        "j": "𝐣", "k": "𝐤", "l": "𝐥", "m": "𝐦", "n": "𝐧", "o": "𝐨", "p": "𝐩", "q": "𝐪", "r": "𝐫",
+        "s": "𝐬", "t": "𝐭", "u": "𝐮", "v": "𝐯", "w": "𝐰", "x": "𝐱", "y": "𝐲", "z": "𝐳",
+        "1": "𝟏", "2": "𝟐", "3": "𝟑", "4": "𝟒", "5": "𝟓", "6": "𝟖", "7": "𝟕", "8": "𝟖", "9": "𝟗", "0": "𝟎",
+        " ": " ",
+        "/": "⁄", "*": "∗", "-": "−", "+": "＋", "~": "∼", "!": "‼", "@": "＠", "#": "＃", "$": "＄", "%": "％", "^": "∧",
+        "&": "＆", "*": "∗", "(": "（", ")": "）", "-": "－", "=": "＝", "_": "＿", "+": "＋", "{": "｛", "}": "｝",
+        "[": "［", "]": "］", ";": "；", ":": "：", "'": "＇", "\"": "＂", "|": "｜", "\\": "＼", "<": "＜", ">": "＞",
+        ".": "．", "?": "？", ",": "，"
+    };
+
+    // Font mapping for "Style 2" (Italic-like font characters)
+    const fontMappingStyle2 = {
+        "A": "𝘈", "B": "𝘉", "C": "𝘊", "D": "𝘋", "E": "𝘌", "F": "𝘍", "G": "𝘎", "H": "𝘏", "I": "𝘐",
+        "J": "𝘑", "K": "𝘒", "L": "𝘓", "M": "𝘔", "N": "𝘕", "O": "𝘖", "P": "𝘗", "Q": "𝘘", "R": "𝘙",
+        "S": "𝘚", "T": "𝘛", "U": "𝘜", "V": "𝘝", "W": "𝘞", "X": "𝘟", "Y": "𝘠", "Z": "𝘡",
+        "a": "𝘢", "b": "𝘣", "c": "𝘤", "d": "𝘥", "e": "𝘦", "f": "𝘧", "g": "𝘨", "h": "𝘩", "i": "𝘪",
+        "j": "𝘫", "k": "𝘬", "l": "𝘭", "m": "𝘮", "n": "𝘯", "o": "𝘰", "p": "𝘱", "q": "𝘲", "r": "𝘳",
+        "s": "𝘴", "t": "𝘵", "u": "𝘶", "v": "𝘷", "w": "𝘸", "x": "𝘹", "y": "𝘺", "z": "𝘻",
+        "1": "𝟏", "2": "𝟐", "3": "𝟑", "4": "𝟒", "5": "𝟓", "6": "𝟖", "7": "𝟕", "8": "𝟖", "9": "𝟗", "0": "𝟎",
+        " ": " ",
+        "/": "⁄", "*": "∗", "-": "−", "+": "＋", "~": "∼", "!": "‼", "@": "＠", "#": "＃", "$": "＄", "%": "％", "^": "∧",
+        "&": "＆", "*": "∗", "(": "（", ")": "）", "-": "－", "=": "＝", "_": "＿", "+": "＋", "{": "｛", "}": "｝",
+        "[": "［", "]": "］", ";": "；", ":": "：", "'": "＇", "\"": "＂", "|": "｜", "\\": "＼", "<": "＜", ">": "＞",
+        ".": "．", "?": "？", ",": "，"
+    };
+
+    // Convert text based on selected style
+    function convertText() {
+        const inputText = document.getElementById("inputText").value;
+
+        // Convert for Style 1
+        let convertedTextStyle1 = '';
+        for (let i = 0; i < inputText.length; i++) {
+            let char = inputText[i];
+            convertedTextStyle1 += fontMappingStyle1[char] || char;
+        }
+        document.getElementById("outputTextStyle1").value = convertedTextStyle1;
+
+        // Convert for Style 2
+        let convertedTextStyle2 = '';
+        for (let i = 0; i < inputText.length; i++) {
+            let char = inputText[i];
+            convertedTextStyle2 += fontMappingStyle2[char] || char;
+        }
+        document.getElementById("outputTextStyle2").value = convertedTextStyle2;
+    }
+
+</script>
+</body>
+</html>
